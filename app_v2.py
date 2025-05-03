@@ -5,7 +5,11 @@ from pathlib import Path
 
 app = Flask(__name__)
 
-# SQLModel model for exchange rates
+# SQLModel models
+class Currency(SQLModel, table=True):
+    code: str = Field(primary_key=True)
+    name: str
+
 class ExchangeRate(SQLModel, table=True):
     currency_pair: str = Field(primary_key=True)
     rate: float
@@ -15,18 +19,11 @@ db_path = Path(__file__).parent / 'exchange_rates_v2.db'
 engine = create_engine(f"sqlite:///{db_path}")
 
 def get_currencies():
-    """Get list of unique currencies from the database"""
+    """Get list of currencies with their names from the database"""
     with Session(engine) as session:
-        # Get all currency pairs
-        statement = select(ExchangeRate.currency_pair)
-        pairs = session.exec(statement).all()
-        
-        # Extract unique currencies
-        currencies = set()
-        for pair in pairs:
-            currencies.update(pair.split('_'))
-        
-        return sorted(list(currencies))
+        statement = select(Currency)
+        currencies = session.exec(statement).all()
+        return sorted(currencies, key=lambda x: x.code)
 
 def calculate_exchange_rate(from_currency: str, to_currency: str, amount: float) -> Optional[float]:
     """Calculate exchange rate between two currencies"""

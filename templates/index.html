@@ -6,117 +6,94 @@
     <title>Currency Converter</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-        .container {
-            max-width: 600px;
+            font-family: Arial, sans-serif;
+            max-width: 800px;
             margin: 0 auto;
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
+        .converter {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .converter-form {
-            display: grid;
-            gap: 20px;
-        }
-        .input-group {
-            display: grid;
-            gap: 5px;
+        .form-group {
+            margin-bottom: 15px;
         }
         label {
-            font-weight: 500;
-            color: #2c3e50;
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
         select, input {
-            padding: 10px;
+            width: 100%;
+            padding: 8px;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 4px;
             font-size: 16px;
         }
         button {
-            background-color: #3498db;
+            background-color: #4CAF50;
             color: white;
-            padding: 12px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s;
         }
         button:hover {
-            background-color: #2980b9;
+            background-color: #45a049;
         }
         .result {
             margin-top: 20px;
             padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            text-align: center;
+            background-color: #e8f5e9;
+            border-radius: 4px;
             display: none;
         }
         .error {
-            color: #e74c3c;
-            text-align: center;
-            margin-top: 10px;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ffebee;
+            border-radius: 4px;
             display: none;
         }
         .debug {
             margin-top: 20px;
-            padding: 10px;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-            font-size: 12px;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+            font-size: 14px;
             color: #666;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="converter">
         <h1>Currency Converter</h1>
-        <div class="converter-form">
-            <div class="input-group">
-                <label for="amount">Amount</label>
-                <input type="number" id="amount" value="1" min="0" step="0.01">
-            </div>
-            <div class="input-group">
-                <label for="from_currency">From Currency</label>
-                <select id="from_currency">
-                    {% if currencies %}
-                        {% for currency in currencies %}
-                        <option value="{{ currency }}">{{ currency }}</option>
-                        {% endfor %}
-                    {% else %}
-                        <option value="">No currencies available</option>
-                    {% endif %}
-                </select>
-            </div>
-            <div class="input-group">
-                <label for="to_currency">To Currency</label>
-                <select id="to_currency">
-                    {% if currencies %}
-                        {% for currency in currencies %}
-                        <option value="{{ currency }}">{{ currency }}</option>
-                        {% endfor %}
-                    {% else %}
-                        <option value="">No currencies available</option>
-                    {% endif %}
-                </select>
-            </div>
-            <button onclick="convert()">Convert</button>
+        <div class="form-group">
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" value="1" min="0" step="0.01">
         </div>
-        <div class="result" id="result"></div>
-        <div class="error" id="error"></div>
+        <div class="form-group">
+            <label for="from_currency">From Currency:</label>
+            <select id="from_currency">
+                {% for currency in currencies %}
+                <option value="{{ currency.code }}">{{ currency.code }} - {{ currency.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="to_currency">To Currency:</label>
+            <select id="to_currency">
+                {% for currency in currencies %}
+                <option value="{{ currency.code }}">{{ currency.code }} - {{ currency.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button onclick="convert()">Convert</button>
+        <div id="result" class="result"></div>
+        <div id="error" class="error"></div>
         <div class="debug">
             Available currencies: {{ currencies|length }}
         </div>
@@ -155,15 +132,14 @@
                 } else {
                     document.getElementById('result').style.display = 'block';
                     document.getElementById('result').innerHTML = `
-                        ${data.amount} ${data.from_currency} = 
-                        <strong>${data.result} ${data.to_currency}</strong>
+                        ${data.amount} ${data.from_currency} = ${data.result} ${data.to_currency}
                     `;
                     document.getElementById('error').style.display = 'none';
                 }
             })
             .catch(error => {
                 document.getElementById('error').style.display = 'block';
-                document.getElementById('error').textContent = 'An error occurred. Please try again.';
+                document.getElementById('error').textContent = 'An error occurred during conversion';
                 document.getElementById('result').style.display = 'none';
             });
         }
