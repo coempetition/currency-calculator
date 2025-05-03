@@ -8,4 +8,5 @@ dependencies = [
     "currencyconverter>=0.18.5",
     "requests>=2.32.3",
     "duckdb>=0.10.0",
+    "flask>=3.0.0",
 ]
