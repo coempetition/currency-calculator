@@ -1,0 +1,10 @@
+[project]
+name = "currency-calculator"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "currencyconverter>=0.18.5",
+    "requests>=2.32.3",
+]
